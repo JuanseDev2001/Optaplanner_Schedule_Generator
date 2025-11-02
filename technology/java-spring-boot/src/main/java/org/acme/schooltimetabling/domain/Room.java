@@ -3,10 +3,12 @@ package org.acme.schooltimetabling.domain;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import lombok.Data;
 
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 
 @Entity
+@Data
 public class Room {
 
     @PlanningId
@@ -15,7 +17,6 @@ public class Room {
 
     private String name;
 
-    // No-arg constructor required for Hibernate
     public Room() {
     }
 
@@ -26,23 +27,6 @@ public class Room {
     public Room(long id, String name) {
         this(name);
         this.id = id;
-    }
-
-    @Override
-    public String toString() {
-        return name;
-    }
-
-    // ************************************************************************
-    // Getters and setters
-    // ************************************************************************
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
     }
 
 }

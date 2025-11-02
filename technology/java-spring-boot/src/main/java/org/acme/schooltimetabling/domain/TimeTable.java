@@ -1,6 +1,7 @@
 package org.acme.schooltimetabling.domain;
 
 import java.util.List;
+import lombok.Data;
 
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.solution.PlanningScore;
@@ -11,6 +12,7 @@ import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.api.solver.SolverStatus;
 
 @PlanningSolution
+@Data
 public class TimeTable {
 
     @ValueRangeProvider
@@ -20,6 +22,9 @@ public class TimeTable {
     @ValueRangeProvider
     @ProblemFactCollectionProperty
     private List<Room> roomList;
+
+    @ProblemFactCollectionProperty
+    private List<ProfessorRestriction> professorRestrictionList;
 
     @PlanningEntityCollectionProperty
     private List<Lesson> lessonList;
@@ -41,32 +46,12 @@ public class TimeTable {
         this.lessonList = lessonList;
     }
 
-    // ************************************************************************
-    // Getters and setters
-    // ************************************************************************
-
-    public List<Timeslot> getTimeslotList() {
-        return timeslotList;
-    }
-
-    public List<Room> getRoomList() {
-        return roomList;
-    }
-
-    public List<Lesson> getLessonList() {
-        return lessonList;
-    }
-
-    public HardSoftScore getScore() {
-        return score;
-    }
-
-    public SolverStatus getSolverStatus() {
-        return solverStatus;
-    }
-
-    public void setSolverStatus(SolverStatus solverStatus) {
-        this.solverStatus = solverStatus;
+    public TimeTable(List<Timeslot> timeslotList, List<Room> roomList,
+            List<ProfessorRestriction> professorRestrictionList, List<Lesson> lessonList) {
+        this.timeslotList = timeslotList;
+        this.roomList = roomList;
+        this.professorRestrictionList = professorRestrictionList;
+        this.lessonList = lessonList;
     }
 
 }

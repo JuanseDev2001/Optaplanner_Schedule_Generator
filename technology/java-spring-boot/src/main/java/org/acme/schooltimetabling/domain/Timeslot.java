@@ -2,6 +2,8 @@ package org.acme.schooltimetabling.domain;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.time.LocalDateTime;
+import lombok.Data;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +12,7 @@ import javax.persistence.Id;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 
 @Entity
+@Data
 public class Timeslot {
 
     @PlanningId
@@ -19,6 +22,8 @@ public class Timeslot {
     private DayOfWeek dayOfWeek;
     private LocalTime startTime;
     private LocalTime endTime;
+    private LocalDateTime startDateTime;
+    private LocalDateTime endDateTime; 
 
     // No-arg constructor required for Hibernate
     public Timeslot() {
@@ -30,6 +35,14 @@ public class Timeslot {
         this.endTime = endTime;
     }
 
+    public Timeslot(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.dayOfWeek = startDateTime.getDayOfWeek();
+        this.startTime = startDateTime.toLocalTime();
+        this.endTime = endDateTime.toLocalTime();
+    }
+
     public Timeslot(long id, DayOfWeek dayOfWeek, LocalTime startTime) {
         this(dayOfWeek, startTime, startTime.plusMinutes(50));
         this.id = id;
@@ -39,25 +52,4 @@ public class Timeslot {
     public String toString() {
         return dayOfWeek + " " + startTime;
     }
-
-    // ************************************************************************
-    // Getters and setters
-    // ************************************************************************
-
-    public Long getId() {
-        return id;
-    }
-
-    public DayOfWeek getDayOfWeek() {
-        return dayOfWeek;
-    }
-
-    public LocalTime getStartTime() {
-        return startTime;
-    }
-
-    public LocalTime getEndTime() {
-        return endTime;
-    }
-
 }

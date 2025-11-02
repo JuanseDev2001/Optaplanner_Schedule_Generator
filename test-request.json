@@ -1,0 +1,129 @@
+{
+  "planningId" : "plan1",
+  "startDate" : [ 2025, 1, 1 ],
+  "endDate" : [ 2025, 6, 30 ],
+  "workWeekConfig" : {
+    "startTime" : "19:00",
+    "endTime" : "22:00"
+  },
+  "weekendConfig" : {
+    "startTime" : "07:00",
+    "endTime" : "12:00"
+  },
+  "groups" : [ {
+    "groupId" : "group1",
+    "groupName" : "Grupo 1",
+    "subject" : {
+      "subjectId" : "subj1",
+      "subjectName" : "Materia 1",
+      "semester" : 1,
+      "position" : 1
+    },
+    "professor" : {
+      "professorId" : "prof1",
+      "professorName" : "Profesor 1",
+      "restrictions" : [ {
+        "dayOfWeek" : "6",
+        "startTime" : "07:00",
+        "endTime" : "12:00",
+        "reason" : "Recurrente"
+      } ]
+    },
+    "classesPerWeek" : 2,
+    "totalClasses" : 8,
+    "classDurationInHours" : 2,
+    "formatTypeId" : "format1"
+  }, {
+    "groupId" : "group2",
+    "groupName" : "Grupo 2",
+    "subject" : {
+      "subjectId" : "subj2",
+      "subjectName" : "Materia 2",
+      "semester" : 2,
+      "position" : 1
+    },
+    "professor" : {
+      "professorId" : "prof2",
+      "professorName" : "Profesor 2",
+      "restrictions" : [ {
+        "dayOfWeek" : "1",
+        "startTime" : "16:00",
+        "endTime" : "19:00",
+        "reason" : "Recurrente"
+      } ]
+    },
+    "classesPerWeek" : 2,
+    "totalClasses" : 8,
+    "classDurationInHours" : 2,
+    "formatTypeId" : "format2"
+  }, {
+    "groupId" : "group3",
+    "groupName" : "Grupo 3",
+    "subject" : {
+      "subjectId" : "subj3",
+      "subjectName" : "Materia 3",
+      "semester" : 3,
+      "position" : 2
+    },
+    "professor" : {
+      "professorId" : "prof3",
+      "professorName" : "Profesor 3",
+      "restrictions" : [ {
+        "dayOfWeek" : "1",
+        "startTime" : "16:00",
+        "endTime" : "18:00",
+        "reason" : "Recurrente"
+      } ]
+    },
+    "classesPerWeek" : 3,
+    "totalClasses" : 12,
+    "classDurationInHours" : 2,
+    "formatTypeId" : "format3"
+  }, {
+    "groupId" : "group4",
+    "groupName" : "Grupo 4",
+    "subject" : {
+      "subjectId" : "subj4",
+      "subjectName" : "Materia 4",
+      "semester" : 4,
+      "position" : 2
+    },
+    "professor" : {
+      "professorId" : "prof4",
+      "professorName" : "Profesor 4",
+      "restrictions" : [ {
+        "dayOfWeek" : "1",
+        "startTime" : "16:00",
+        "endTime" : "18:00",
+        "reason" : "Recurrente"
+      } ]
+    },
+    "classesPerWeek" : 2,
+    "totalClasses" : 8,
+    "classDurationInHours" : 2,
+    "formatTypeId" : "format4"
+  }, {
+    "groupId" : "group5",
+    "groupName" : "Grupo 5",
+    "subject" : {
+      "subjectId" : "subj5",
+      "subjectName" : "Materia 5",
+      "semester" : 5,
+      "position" : 3
+    },
+    "professor" : {
+      "professorId" : "prof5",
+      "professorName" : "Profesor 5",
+      "restrictions" : [ {
+        "dayOfWeek" : "1",
+        "startTime" : "16:00",
+        "endTime" : "18:00",
+        "reason" : "Recurrente"
+      } ]
+    },
+    "classesPerWeek" : 2,
+    "totalClasses" : 8,
+    "classDurationInHours" : 2,
+    "formatTypeId" : "format5"
+  } ]
+}

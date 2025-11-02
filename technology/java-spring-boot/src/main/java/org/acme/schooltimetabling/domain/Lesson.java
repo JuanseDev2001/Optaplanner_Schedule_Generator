@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import lombok.Data;
 
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
@@ -11,6 +12,7 @@ import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 @PlanningEntity
 @Entity
+@Data
 public class Lesson {
 
     @PlanningId
@@ -20,6 +22,14 @@ public class Lesson {
     private String subject;
     private String teacher;
     private String studentGroup;
+
+    private String groupId;
+    private String professorId;
+    private String formatTypeId;
+    private int subjectPosition;  // priority of the subject in the group's curriculum
+    private int requiredDurationInHours;  // required duration of the class in hours
+    private int classesPerWeek; // expected number of classes per week for the group
+    private int weeklyPatternIndex; // 0, 1, 2... indicates which of the N weekly classes this is (0 = first class of the week, 1 = second, etc.)
 
     @PlanningVariable
     @ManyToOne
@@ -49,42 +59,6 @@ public class Lesson {
     @Override
     public String toString() {
         return subject + "(" + id + ")";
-    }
-
-    // ************************************************************************
-    // Getters and setters
-    // ************************************************************************
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public String getTeacher() {
-        return teacher;
-    }
-
-    public String getStudentGroup() {
-        return studentGroup;
-    }
-
-    public Timeslot getTimeslot() {
-        return timeslot;
-    }
-
-    public void setTimeslot(Timeslot timeslot) {
-        this.timeslot = timeslot;
-    }
-
-    public Room getRoom() {
-        return room;
-    }
-
-    public void setRoom(Room room) {
-        this.room = room;
     }
 
 }
