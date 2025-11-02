@@ -5,7 +5,7 @@ import java.util.List;
 import java.time.LocalDate;
 
 @Data
-public class AutoScheduleRequestDTO {
+public class ScheduleGeneratorRequestDTO {
     private String planningId;
     private LocalDate startDate;
     private LocalDate endDate;

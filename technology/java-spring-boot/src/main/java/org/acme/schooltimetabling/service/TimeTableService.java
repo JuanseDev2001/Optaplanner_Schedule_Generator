@@ -23,7 +23,7 @@ public class TimeTableService {
     private static final DateTimeFormatter ISO_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public TimeTable convertRequestToTimeTable(AutoScheduleRequestDTO request) {
+    public TimeTable convertRequestToTimeTable(ScheduleGeneratorRequestDTO request) {
         // Obtener las duraciones únicas requeridas
         Set<Integer> requiredDurations = request.getGroups().stream()
             .map(GroupScheduleDTO::getClassDurationInHours)
@@ -230,7 +230,7 @@ public class TimeTableService {
         return lessons;
     }
 
-    public AutoScheduleResponseDTO convertTimeTableToResponse(String planningId, TimeTable timeTable) {
+    public ScheduleGeneratorResponseDTO convertTimeTableToResponse(String planningId, TimeTable timeTable) {
         List<ScheduledClassDTO> scheduledClasses = new ArrayList<>();
         
         for (Lesson lesson : timeTable.getLessonList()) {
@@ -255,9 +255,23 @@ public class TimeTableService {
             }
         }
         
-        String status = timeTable.getScore() != null ? "SOLVED" : "NOT_SOLVED";
-        String scoreExplanation = timeTable.getScore() != null ? timeTable.getScore().toString() : "No score available";
+        // Determinar el status basado en el hard score
+        String status;
+        String scoreExplanation;
         
-        return new AutoScheduleResponseDTO(planningId, status, scoreExplanation, scheduledClasses);
+        if (timeTable.getScore() == null) {
+            status = "NOT_SOLVED";
+            scoreExplanation = "No score available";
+        } else {
+            scoreExplanation = timeTable.getScore().toString();
+            // Si el hard score es negativo, hay violaciones de restricciones duras
+            if (timeTable.getScore().getHardScore() < 0) {
+                status = "FAILED";
+            } else {
+                status = "SOLVED";
+            }
+        }
+
+        return new ScheduleGeneratorResponseDTO(planningId, status, scoreExplanation, scheduledClasses);
     }
 }
