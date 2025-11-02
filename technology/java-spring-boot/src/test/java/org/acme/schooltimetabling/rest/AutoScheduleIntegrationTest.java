@@ -104,7 +104,7 @@ public class AutoScheduleIntegrationTest {
 
         // If there's an error, show the response body
         if (response.getStatusCode() != HttpStatus.OK) {
-            System.out.println("\n⚠️ ERROR EN LA RESPUESTA:");
+            System.out.println("\nERROR EN LA RESPUESTA:");
             System.out.println("Cuerpo de la respuesta: " + response.getBody());
             if (response.getBody() != null) {
                 System.out.println("Status: " + response.getBody().getStatus());
@@ -153,7 +153,7 @@ public class AutoScheduleIntegrationTest {
             // Validate total number of scheduled classes
             assertThat(responseBody.getScheduledClasses().size()).isEqualTo(expectedTotalClasses);
         } else {
-            System.out.println("\n⚠️ ADVERTENCIA: No se programaron lecciones");
+            System.out.println("\nADVERTENCIA: No se programaron lecciones");
         }
 
         // Print complete JSON response
