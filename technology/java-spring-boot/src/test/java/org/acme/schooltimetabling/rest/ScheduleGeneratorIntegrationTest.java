@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
-                "optaplanner.solver.termination.spent-limit=2m",
+                "optaplanner.solver.termination.spent-limit=1m",
                 "optaplanner.solver.termination.best-score-limit=0hard/*soft"
         })
 public class ScheduleGeneratorIntegrationTest {
