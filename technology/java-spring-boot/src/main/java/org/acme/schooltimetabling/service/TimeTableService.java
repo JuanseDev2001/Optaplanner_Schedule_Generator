@@ -163,25 +163,30 @@ public class TimeTableService {
         List<ProfessorRestriction> restrictions = new ArrayList<>();
         
         for (GroupScheduleDTO group : groups) {
-            if (group.getProfessor() != null && group.getProfessor().getRestrictions() != null) {
-                for (RestrictionInfoDTO restrictionDTO : group.getProfessor().getRestrictions()) {
-                    // Convertir dayOfWeek de String a DayOfWeek
-                    // Asumiendo que "1" = MONDAY, "2" = TUESDAY, etc.
-                    int dayNum = Integer.parseInt(restrictionDTO.getDayOfWeek());
-                    DayOfWeek dayOfWeek = DayOfWeek.of(dayNum);
-                    
-                    LocalTime startTime = LocalTime.parse(restrictionDTO.getStartTime(), TIME_FORMATTER);
-                    LocalTime endTime = LocalTime.parse(restrictionDTO.getEndTime(), TIME_FORMATTER);
-                    
-                    ProfessorRestriction restriction = new ProfessorRestriction(
-                        group.getProfessor().getProfessorId(),
-                        dayOfWeek,
-                        startTime,
-                        endTime,
-                        restrictionDTO.getReason()
-                    );
-                    
-                    restrictions.add(restriction);
+            // Iterar sobre todos los profesores del grupo
+            if (group.getProfessors() != null && !group.getProfessors().isEmpty()) {
+                for (ProfessorInfoDTO professor : group.getProfessors()) {
+                    if (professor.getRestrictions() != null) {
+                        for (RestrictionInfoDTO restrictionDTO : professor.getRestrictions()) {
+                            // Convertir dayOfWeek de String a DayOfWeek
+                            // Asumiendo que "1" = MONDAY, "2" = TUESDAY, etc.
+                            int dayNum = Integer.parseInt(restrictionDTO.getDayOfWeek());
+                            DayOfWeek dayOfWeek = DayOfWeek.of(dayNum);
+                            
+                            LocalTime startTime = LocalTime.parse(restrictionDTO.getStartTime(), TIME_FORMATTER);
+                            LocalTime endTime = LocalTime.parse(restrictionDTO.getEndTime(), TIME_FORMATTER);
+                            
+                            ProfessorRestriction restriction = new ProfessorRestriction(
+                                professor.getProfessorId(),
+                                dayOfWeek,
+                                startTime,
+                                endTime,
+                                restrictionDTO.getReason()
+                            );
+                            
+                            restrictions.add(restriction);
+                        }
+                    }
                 }
             }
         }
@@ -199,12 +204,26 @@ public class TimeTableService {
             .collect(Collectors.toList());
         
         for (GroupScheduleDTO group : sortedGroups) {
+            // Crear nombres de profesores concatenados para el campo teacher
+            String teacherNames = "";
+            List<String> professorIdsList = new ArrayList<>();
+            
+            if (group.getProfessors() != null && !group.getProfessors().isEmpty()) {
+                teacherNames = group.getProfessors().stream()
+                    .map(ProfessorInfoDTO::getProfessorName)
+                    .collect(Collectors.joining(", "));
+                
+                professorIdsList = group.getProfessors().stream()
+                    .map(ProfessorInfoDTO::getProfessorId)
+                    .collect(Collectors.toList());
+            }
+            
             // Crear lecciones según totalClasses
             for (int i = 0; i < group.getTotalClasses(); i++) {
                 Lesson lesson = new Lesson(
                     lessonIdCounter++,  // Asignar ID único
                     group.getSubject().getSubjectName(),
-                    group.getProfessor().getProfessorName(),
+                    teacherNames,
                     group.getGroupName(),
                     null,  // timeslot se asignará por OptaPlanner
                     null   // room se asignará por OptaPlanner
@@ -212,7 +231,7 @@ public class TimeTableService {
                 
                 // Agregar información adicional necesaria para la respuesta
                 lesson.setGroupId(group.getGroupId());
-                lesson.setProfessorId(group.getProfessor().getProfessorId());
+                lesson.setProfessorIds(new ArrayList<>(professorIdsList)); // Asignar lista de IDs de profesores
                 lesson.setFormatTypeId(group.getFormatTypeId());
                 lesson.setSubjectPosition(group.getSubject().getPosition());
                 lesson.setRequiredDurationInHours(group.getClassDurationInHours());
@@ -246,10 +265,8 @@ public class TimeTableService {
                 classDTO.setGroupId(lesson.getGroupId());
                 classDTO.setFormatTypeId(lesson.getFormatTypeId());
                 
-                // Lista de IDs de profesores (solo uno por ahora)
-                List<String> professorIds = new ArrayList<>();
-                professorIds.add(lesson.getProfessorId());
-                classDTO.setProfessorIds(professorIds);
+                // Usar la lista de IDs de profesores de la lección
+                classDTO.setProfessorIds(lesson.getProfessorIds());
                 
                 scheduledClasses.add(classDTO);
             }

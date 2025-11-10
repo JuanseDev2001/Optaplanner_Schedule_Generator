@@ -4,11 +4,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.ElementCollection;
 import lombok.Data;
 
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
+
+import java.util.List;
+import java.util.ArrayList;
 
 @PlanningEntity
 @Entity
@@ -24,7 +28,10 @@ public class Lesson {
     private String studentGroup;
 
     private String groupId;
-    private String professorId;
+    
+    @ElementCollection
+    private List<String> professorIds = new ArrayList<>();
+    
     private String formatTypeId;
     private int subjectPosition;  // priority of the subject in the group's curriculum
     private int requiredDurationInHours;  // required duration of the class in hours

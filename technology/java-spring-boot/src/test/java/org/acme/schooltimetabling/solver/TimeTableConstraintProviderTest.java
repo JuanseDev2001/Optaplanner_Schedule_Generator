@@ -39,11 +39,14 @@ class TimeTableConstraintProviderTest {
     void teacherConflict() {
         String conflictingTeacher = "Teacher1";
         Lesson firstLesson = new Lesson(1, "Subject1", conflictingTeacher, "Group1", TIMESLOT1, ROOM1);
+        firstLesson.setProfessorIds(java.util.Collections.singletonList("prof1"));
         Lesson conflictingLesson = new Lesson(2, "Subject2", conflictingTeacher, "Group2", TIMESLOT1, ROOM2);
+        conflictingLesson.setProfessorIds(java.util.Collections.singletonList("prof1"));
         Lesson nonConflictingLesson = new Lesson(3, "Subject3", "Teacher2", "Group3", TIMESLOT2, ROOM1);
+        nonConflictingLesson.setProfessorIds(java.util.Collections.singletonList("prof2"));
         constraintVerifier.verifyThat(TimeTableConstraintProvider::teacherConflict)
-                .given(firstLesson, conflictingLesson, nonConflictingLesson)
-                .penalizesBy(1);
+            .given(firstLesson, conflictingLesson, nonConflictingLesson)
+            .penalizesBy(1);
     }
 
     @Test
@@ -61,23 +64,30 @@ class TimeTableConstraintProviderTest {
     void teacherRoomStability() {
         String teacher = "Teacher1";
         Lesson lessonInFirstRoom = new Lesson(1, "Subject1", teacher, "Group1", TIMESLOT1, ROOM1);
+        lessonInFirstRoom.setProfessorIds(java.util.Collections.singletonList("prof1"));
         Lesson lessonInSameRoom = new Lesson(2, "Subject2", teacher, "Group2", TIMESLOT1, ROOM1);
+        lessonInSameRoom.setProfessorIds(java.util.Collections.singletonList("prof1"));
         Lesson lessonInDifferentRoom = new Lesson(3, "Subject3", teacher, "Group3", TIMESLOT1, ROOM2);
+        lessonInDifferentRoom.setProfessorIds(java.util.Collections.singletonList("prof1"));
         constraintVerifier.verifyThat(TimeTableConstraintProvider::teacherRoomStability)
-                .given(lessonInFirstRoom, lessonInDifferentRoom, lessonInSameRoom)
-                .penalizesBy(2);
+            .given(lessonInFirstRoom, lessonInDifferentRoom, lessonInSameRoom)
+            .penalizesBy(2);
     }
 
     @Test
     void teacherTimeEfficiency() {
         String teacher = "Teacher1";
         Lesson singleLessonOnMonday = new Lesson(1, "Subject1", teacher, "Group1", TIMESLOT1, ROOM1);
+        singleLessonOnMonday.setProfessorIds(java.util.Collections.singletonList("prof1"));
         Lesson firstTuesdayLesson = new Lesson(2, "Subject2", teacher, "Group2", TIMESLOT2, ROOM1);
+        firstTuesdayLesson.setProfessorIds(java.util.Collections.singletonList("prof1"));
         Lesson secondTuesdayLesson = new Lesson(3, "Subject3", teacher, "Group3", TIMESLOT3, ROOM1);
+        secondTuesdayLesson.setProfessorIds(java.util.Collections.singletonList("prof1"));
         Lesson thirdTuesdayLessonWithGap = new Lesson(4, "Subject4", teacher, "Group4", TIMESLOT4, ROOM1);
+        thirdTuesdayLessonWithGap.setProfessorIds(java.util.Collections.singletonList("prof1"));
         constraintVerifier.verifyThat(TimeTableConstraintProvider::teacherTimeEfficiency)
-                .given(singleLessonOnMonday, firstTuesdayLesson, secondTuesdayLesson, thirdTuesdayLessonWithGap)
-                .rewardsWith(1); // Second tuesday lesson immediately follows the first.
+            .given(singleLessonOnMonday, firstTuesdayLesson, secondTuesdayLesson, thirdTuesdayLessonWithGap)
+            .rewardsWith(1); // Second tuesday lesson immediately follows the first.
     }
 
     @Test

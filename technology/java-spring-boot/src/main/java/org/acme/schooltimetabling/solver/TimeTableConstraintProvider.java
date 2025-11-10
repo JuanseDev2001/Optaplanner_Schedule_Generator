@@ -56,10 +56,18 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
 
     Constraint teacherConflict(ConstraintFactory constraintFactory) {
         // A teacher can teach at most one lesson at the same time.
+        // Verificar si algún profesor está en ambas lecciones al mismo tiempo
         return constraintFactory
                 .forEachUniquePair(Lesson.class,
-                        Joiners.equal(Lesson::getTimeslot),
-                        Joiners.equal(Lesson::getTeacher))
+                        Joiners.equal(Lesson::getTimeslot))
+                .filter((lesson1, lesson2) -> {
+                    if (lesson1.getProfessorIds() == null || lesson2.getProfessorIds() == null) {
+                        return false;
+                    }
+                    // Verificar si hay algún profesor en común entre las dos lecciones
+                    return lesson1.getProfessorIds().stream()
+                            .anyMatch(profId -> lesson2.getProfessorIds().contains(profId));
+                })
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint("Teacher conflict");
     }
@@ -76,15 +84,18 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
 
     Constraint professorAvailability(ConstraintFactory constraintFactory) {
         // A professor cannot teach during their restricted times.
+        // Verificar las restricciones para TODOS los profesores de cada lección
         return constraintFactory
                 .forEach(Lesson.class)
-                .join(ProfessorRestriction.class,
-                        Joiners.equal(Lesson::getProfessorId, ProfessorRestriction::getProfessorId))
+                .join(ProfessorRestriction.class)
                 .filter((lesson, restriction) -> {
-                    if (lesson.getTimeslot() == null) {
+                    if (lesson.getTimeslot() == null || lesson.getProfessorIds() == null) {
                         return false;
                     }
-                    return restriction.conflictsWith(lesson.getTimeslot());
+                    // Verificar si alguno de los profesores de la lección tiene esta restricción
+                    // y si el timeslot conflictúa con ella
+                    return lesson.getProfessorIds().contains(restriction.getProfessorId())
+                            && restriction.conflictsWith(lesson.getTimeslot());
                 })
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint("Professor availability");
@@ -92,21 +103,45 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
 
     Constraint teacherRoomStability(ConstraintFactory constraintFactory) {
         // A teacher prefers to teach in a single room.
+        // Verificar estabilidad de sala para profesores compartidos
         return constraintFactory
-                .forEachUniquePair(Lesson.class,
-                        Joiners.equal(Lesson::getTeacher))
-                .filter((lesson1, lesson2) -> lesson1.getRoom() != lesson2.getRoom())
+                .forEachUniquePair(Lesson.class)
+                .filter((lesson1, lesson2) -> {
+                    if (lesson1.getRoom() == null || lesson2.getRoom() == null
+                            || lesson1.getProfessorIds() == null || lesson2.getProfessorIds() == null) {
+                        return false;
+                    }
+                    // Verificar si hay algún profesor en común y están en salas diferentes
+                    boolean hasCommonProfessor = lesson1.getProfessorIds().stream()
+                            .anyMatch(profId -> lesson2.getProfessorIds().contains(profId));
+                    
+                    return hasCommonProfessor && !lesson1.getRoom().equals(lesson2.getRoom());
+                })
                 .penalize(HardSoftScore.ONE_SOFT)
                 .asConstraint("Teacher room stability");
     }
 
     Constraint teacherTimeEfficiency(ConstraintFactory constraintFactory) {
         // A teacher prefers to teach sequential lessons and dislikes gaps between lessons.
+        // Recompensar cuando profesores compartidos tienen lecciones cercanas
         return constraintFactory
                 .forEach(Lesson.class)
-                .join(Lesson.class, Joiners.equal(Lesson::getTeacher),
-                        Joiners.equal((lesson) -> lesson.getTimeslot().getDayOfWeek()))
+                .join(Lesson.class,
+                        Joiners.equal((lesson) -> lesson.getTimeslot() == null ? null : lesson.getTimeslot().getDayOfWeek()))
                 .filter((lesson1, lesson2) -> {
+                    if (lesson1.getTimeslot() == null || lesson2.getTimeslot() == null
+                            || lesson1.getProfessorIds() == null || lesson2.getProfessorIds() == null) {
+                        return false;
+                    }
+                    
+                    // Verificar si hay algún profesor en común
+                    boolean hasCommonProfessor = lesson1.getProfessorIds().stream()
+                            .anyMatch(profId -> lesson2.getProfessorIds().contains(profId));
+                    
+                    if (!hasCommonProfessor) {
+                        return false;
+                    }
+                    
                     Duration between = Duration.between(lesson1.getTimeslot().getEndTime(),
                             lesson2.getTimeslot().getStartTime());
                     return !between.isNegative() && between.compareTo(Duration.ofMinutes(30)) <= 0;
@@ -152,13 +187,22 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
 
     Constraint teacherTimeSlotOverlap(ConstraintFactory constraintFactory) {
         // A teacher cannot have overlapping classes (not just same timeslot, but any overlap)
+        // Verificar solapamiento de tiempo para profesores compartidos
         return constraintFactory
-                .forEachUniquePair(Lesson.class,
-                        Joiners.equal(Lesson::getTeacher))
+                .forEachUniquePair(Lesson.class)
                 .filter((lesson1, lesson2) -> {
-                    if (lesson1.getTimeslot() == null || lesson2.getTimeslot() == null) {
+                    if (lesson1.getTimeslot() == null || lesson2.getTimeslot() == null 
+                            || lesson1.getProfessorIds() == null || lesson2.getProfessorIds() == null) {
                         return false;
                     }
+                    // Verificar si hay algún profesor en común
+                    boolean hasCommonProfessor = lesson1.getProfessorIds().stream()
+                            .anyMatch(profId -> lesson2.getProfessorIds().contains(profId));
+                    
+                    if (!hasCommonProfessor) {
+                        return false;
+                    }
+                    
                     // Verificar si los timeslots se solapan en tiempo
                     return lesson1.getTimeslot().getStartDateTime().isBefore(lesson2.getTimeslot().getEndDateTime())
                             && lesson2.getTimeslot().getStartDateTime().isBefore(lesson1.getTimeslot().getEndDateTime());

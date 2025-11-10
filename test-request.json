@@ -1,7 +1,7 @@
 {
   "planningId" : "plan1",
   "startDate" : [ 2025, 1, 1 ],
-  "endDate" : [ 2025, 1, 30 ],
+  "endDate" : [ 2025, 6, 30 ],
   "workWeekConfig" : {
     "startTime" : "19:00",
     "endTime" : "22:00"
@@ -19,7 +19,7 @@
       "semester" : 1,
       "position" : 1
     },
-    "professor" : {
+    "professors" : [ {
       "professorId" : "prof1",
       "professorName" : "Profesor 1",
       "restrictions" : [ {
@@ -28,7 +28,7 @@
         "endTime" : "12:00",
         "reason" : "Recurrente"
       } ]
-    },
+    } ],
     "classesPerWeek" : 2,
     "totalClasses" : 8,
     "classDurationInHours" : 2,
@@ -42,7 +42,7 @@
       "semester" : 2,
       "position" : 1
     },
-    "professor" : {
+    "professors" : [ {
       "professorId" : "prof2",
       "professorName" : "Profesor 2",
       "restrictions" : [ {
@@ -51,7 +51,7 @@
         "endTime" : "19:00",
         "reason" : "Recurrente"
       } ]
-    },
+    } ],
     "classesPerWeek" : 2,
     "totalClasses" : 8,
     "classDurationInHours" : 2,
@@ -65,7 +65,7 @@
       "semester" : 3,
       "position" : 2
     },
-    "professor" : {
+    "professors" : [ {
       "professorId" : "prof3",
       "professorName" : "Profesor 3",
       "restrictions" : [ {
@@ -74,7 +74,16 @@
         "endTime" : "18:00",
         "reason" : "Recurrente"
       } ]
-    },
+    }, {
+      "professorId" : "prof3b",
+      "professorName" : "Profesor 3B",
+      "restrictions" : [ {
+        "dayOfWeek" : "3",
+        "startTime" : "19:00",
+        "endTime" : "21:00",
+        "reason" : "Recurrente"
+      } ]
+    } ],
     "classesPerWeek" : 3,
     "totalClasses" : 12,
     "classDurationInHours" : 2,
@@ -88,7 +97,7 @@
       "semester" : 4,
       "position" : 2
     },
-    "professor" : {
+    "professors" : [ {
       "professorId" : "prof4",
       "professorName" : "Profesor 4",
       "restrictions" : [ {
@@ -97,7 +106,7 @@
         "endTime" : "18:00",
         "reason" : "Recurrente"
       } ]
-    },
+    } ],
     "classesPerWeek" : 2,
     "totalClasses" : 8,
     "classDurationInHours" : 2,
@@ -111,7 +120,7 @@
       "semester" : 5,
       "position" : 3
     },
-    "professor" : {
+    "professors" : [ {
       "professorId" : "prof5",
       "professorName" : "Profesor 5",
       "restrictions" : [ {
@@ -120,7 +129,7 @@
         "endTime" : "18:00",
         "reason" : "Recurrente"
       } ]
-    },
+    } ],
     "classesPerWeek" : 2,
     "totalClasses" : 8,
     "classDurationInHours" : 2,

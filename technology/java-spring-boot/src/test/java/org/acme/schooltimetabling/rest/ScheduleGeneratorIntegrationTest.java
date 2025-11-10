@@ -67,10 +67,16 @@ public class ScheduleGeneratorIntegrationTest {
         request.getGroups().forEach(group -> {
             System.out.println("  Grupo: " + group.getGroupName());
             System.out.println("    Materia: " + group.getSubject().getSubjectName());
-            System.out.println("    Profesor: " + group.getProfessor().getProfessorName());
+            if (group.getProfessors() != null && !group.getProfessors().isEmpty()) {
+                for (var prof : group.getProfessors()) {
+                    System.out.println("    Profesor: " + prof.getProfessorName());
+                    System.out.println("      Restricciones del profesor: " + (prof.getRestrictions() != null ? prof.getRestrictions().size() : 0));
+                }
+            } else {
+                System.out.println("    Profesores: [ninguno]");
+            }
             System.out.println("    Clases por semana: " + group.getClassesPerWeek());
             System.out.println("    Total de clases: " + group.getTotalClasses());
-            System.out.println("    Restricciones del profesor: " + group.getProfessor().getRestrictions().size());
         });
 
         assertThat(request).isNotNull();
